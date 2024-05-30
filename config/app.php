@@ -182,6 +182,11 @@ return [
         */
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
 
+        /*
+         * Exception Error Handling service provider
+        */
+        App\Providers\ExceptionResponseServiceProvider::class,
+
     ],
 
     /*
