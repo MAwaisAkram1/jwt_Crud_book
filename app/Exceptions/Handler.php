@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -38,4 +41,41 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    
+    // public function render($request, Throwable $exception) {
+    //     if ($request instanceof ValidationException) {
+    //         return Response::fail();
+    //     }
+    // }
+
+    // Response::macro('exceptionHandler', function ($exception){
+        //     if ($exception instanceof NotFoundHttpException){
+        //         return response()->json([
+        //             'error' => 'Resource not found',
+        //         ], 404);
+        //     }
+
+        //     if ($exception instanceof ForbiddenHttpException) {
+        //         return response()->json([
+        //             'error' => 'Forbidden',
+        //         ], 403);
+        //     }
+
+        //     if ($exception instanceof  AuthenticationException) {
+        //         return response()->json([
+        //             'error' => 'Unauthorized',
+        //         ], 401);
+        //     }
+
+        //     if ($exception instanceof ValidationException) {
+        //         return response()->json([
+        //             'errors' => 'Validation failed',
+        //         ], 422);
+        //     }
+
+        //     return response()->json([
+        //         'error' => 'An unexpected error occurred'
+        //     ], 500);
+        // });
 }

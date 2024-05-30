@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RefreshRequest;
 use Illuminate\Validation\ValidationException;
 
 class UserAuthentication
@@ -30,6 +31,7 @@ class UserAuthentication
         } catch (ValidationException $e) {
             return response()->json([
                 'errors' => $e->errors(),
+                // 'message' => "error"
             ], 401);
         }
 
