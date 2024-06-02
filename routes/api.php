@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\BookController;
 // use App\Http\Middleware\UserAuthentication;
 
 /*
@@ -31,6 +32,16 @@ Route::group(['middleware' => 'api'], function ($router) {
     Route::post('/auth/refresh', [UserController::class, 'refresh'])->name('refresh');
 
     Route::post('auth/logout', [UserController::class, 'logout'])->name('logout');
+
+    Route::get('/books', [BookController::class, 'index']);
+    Route::get('/books/{id}', [BookController::class, 'show']);
+
+    // Protected routes accessible only to authenticated users
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/books/create', [BookController::class, 'store']);
+        Route::put('/books/update/{id}', [BookController::class, 'update']);
+        Route::delete('/books/delete/{id}', [BookController::class, 'destroy']);
+    });
 });
 
 
