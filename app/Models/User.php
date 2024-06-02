@@ -41,6 +41,8 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'confirmation_token',
+        'token_expiration',
     ];
 
     /**
@@ -67,6 +69,8 @@ class User extends Authenticatable implements JWTSubject
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'confirmation_token' => $data['confirmation_token'],
+            'token_expiration' => $data['token_expiration'],
         ]);
     }
 

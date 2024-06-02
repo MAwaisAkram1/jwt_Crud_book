@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => 'api'], function ($router) {
     Route::post('/auth/register', [UserController::class, 'register'])->middleware('UserAuth:register')->name('register');
+    Route::get('/auth/confirm/{token}', [UserController::class, 'confirm'])->name('confirm');
+
     Route::post('/auth/login', [UserController::class, 'login'])->middleware('UserAuth:login')->name('login');
 
     Route::post('/auth/refresh', [UserController::class, 'refresh'])->name('refresh');

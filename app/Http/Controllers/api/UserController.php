@@ -4,23 +4,46 @@ namespace App\Http\Controllers\api;
 
 use App\Models\User;
 use App\Models\UserToken;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\UserConfirmationMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Jobs\SendConfirmationEmail;
 
 class UserController extends Controller
 {
     public function register(Request $request) {
+        $data = $request->all();
 
-        $user = User::registerUser($request->all());
-        // $token = JwtAuth::fromUser($user);
+        $token = Str::random(60);
+        $data['confirmation_token'] = $token;
+        $data['token_expiration'] =  now()->addMinutes(5);
+        $user = User::registerUser($data);
+
+        SendConfirmationEmail::dispatch($user, $token);
         return response()->json([
-            'message' => 'User registration successful',
+            'message' => 'User registration Pending. Please check your email to confirm your registration.',
             'user' => $user,
-            // 'token'=> $token,
         ]);
+    }
+
+    public function confirm($token) {
+        $user = User::where('confirmation_token', $token)->where('token_expiration', '>', now())->first();
+        if (!$user) {
+            return response()->json([
+               'message' => 'Invalid or Expired token',
+            ], 400);
+        }
+
+        $user->email_verified_at=now();
+        $user->confirmation_token=null;
+        $user->token_expiration=null;
+        $user->save();
+
+        return response()->json(['message' => 'Email confirmed successfully']);
     }
 
     public function login(Request $request) {
@@ -32,6 +55,12 @@ class UserController extends Controller
                 ], 401);
             }
             $user = JWTAuth::user();
+            // Check if email is verified
+            if (is_null($user->email_verified_at)) {
+                return response()->json([
+                    'message' => 'Email not verified',
+                ], 403); // 403 Forbidden
+            }
             // Store the token
             UserToken::create(['user_id' => $user->id, 'token' => $token]);
             return response()->json([
