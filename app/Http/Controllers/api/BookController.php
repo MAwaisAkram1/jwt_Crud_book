@@ -10,6 +10,7 @@ use App\Http\Resources\BookResource;
 use App\Http\Resources\BookCollection;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use Illuminate\Support\Facades\Response;
 
 class BookController extends Controller
 {
@@ -82,7 +83,7 @@ class BookController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
         $book = Book::findOrFail($id);
         if ($book->user_id !== $user->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return Response::fail("Unauthorized", 403);
         }
 
         $bookData = $request->all();
@@ -102,9 +103,9 @@ class BookController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
         $book = Book::findOrFail($id);
         if ($book->user_id !== $user->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return Response::fail("Unauthorized", 403);
         }
         $book->delete();
-        return response()->json(['message' => 'Book deleted successfully'], 200);
+        return Response::success("Book Deleted Successfully", 200);
     }
 }

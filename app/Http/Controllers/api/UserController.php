@@ -24,18 +24,13 @@ class UserController extends Controller
         $user = User::registerUser($data);
 
         SendConfirmationEmail::dispatch($user, $token);
-        return response()->json([
-            'message' => 'User registration Pending. Please check your email to confirm your registration.',
-            'user' => $user,
-        ]);
+        return Response::success("User registration Pending. Please check your email to confirm your registration.", 200);
     }
 
     public function confirm($token) {
         $user = User::where('confirmation_token', $token)->where('token_expiration', '>', now())->first();
         if (!$user) {
-            return response()->json([
-               'message' => 'Invalid or Expired token',
-            ], 400);
+            return Response::fail("Invalid or Expired token", 400);
         }
 
         $user->email_verified_at=now();
@@ -43,36 +38,43 @@ class UserController extends Controller
         $user->token_expiration=null;
         $user->save();
 
-        return response()->json(['message' => 'Email confirmed successfully']);
+        return Response::success("Your Email is Verified", 201);
     }
 
     public function login(Request $request) {
         $userCredentials = $request->only('email', 'password');
+        $remember_me = $request->input('remember_me', false);
         try {
-            if (!$token = JwtAuth::attempt($userCredentials)){
-                return response()->json([
-                    'message' =>'Invalid Credentials',
-                ], 401);
+            $defaultTTL = config('jwt.ttl');
+            if ($remember_me) {
+                $extendTTL = 2;
+                JWTAuth::factory()->setTTL($extendTTL);
+            } else {
+                JWTAuth::factory()->setTTL($defaultTTL);
             }
+
+            if (!$token = JwtAuth::attempt($userCredentials)){
+                return Response::fail("Invalid Credentials", 401);
+            }
+
             $user = JWTAuth::user();
             // Check if email is verified
             if (is_null($user->email_verified_at)) {
-                return response()->json([
-                    'message' => 'Email not verified',
-                ], 403); // 403 Forbidden
+                return Response::fail("Email Not Verified", 403);
             }
             // Store the token
             UserToken::create(['user_id' => $user->id, 'token' => $token]);
-            return response()->json([
-                'message' => 'User Logged in Successfully',
-                'token'=>$token,
-            ], 201);
-            // return Response::success('User Login Success', 201);
+
+            $expire_in = $remember_me ? $extendTTL * 60 : $defaultTTL;
+            $response = [
+                'message' => 'User Logged In Successfully',
+                'token' => $token,
+                'expire_in' => $expire_in,
+            ];
+            return Response::success($response, 200);
 
         } catch (JWTException $e) {
-            return response()->json([
-               'message' => 'Failed to create token',
-            ], 500);
+            return Response::fail("Failed to create Token", 500);
         }
     }
 
@@ -80,23 +82,21 @@ class UserController extends Controller
         try {
             $token = JWTAuth::getToken();
             if(!$token) {
-                return response()->json([
-                    'message' =>'token not found',
-                ], 401);
+                return Response::fail("Token not Found", 401);
             }
             $newToken = JWTAuth::refresh($token);
             $user = JWTAuth::setToken($newToken)->toUser();
 
             UserToken::where('token', $token)->delete();
             UserToken::create(['user_id' => $user->id, 'token' => $newToken]);
-            return response()->json([
-                'message' => 'Token Refresh successfully',
+            $response = [
+                'message' => 'Your Token is refreshed',
                 'token' => $newToken,
-            ], 201);
+            ];
+            return Response::success($response, 200);
+
         } catch (JWTException $e) {
-            return response()->json([
-                'error' => 'Failed to refresh token, please try again',
-            ], 401);
+            return Response::fail("Failed to Create Token, plz try again", 401);
         }
     }
 
@@ -105,13 +105,10 @@ class UserController extends Controller
             $token = JWTAuth::getToken();
             JWTAuth::invalidate($token);
             UserToken::where('token', $token)->delete();
-            return response()->json([
-                'message' => 'User logout Successfully'
-            ], 201);
+            return Response::success("Your logout Successfully", 200);
+
         } catch (JWTException $e) {
-            return response()->json([
-                'error' => 'Failed to logout, please try again',
-            ], 401);
+            return Response::fail("Failed to logout, plz tyr again", 401);
         }
     }
 }

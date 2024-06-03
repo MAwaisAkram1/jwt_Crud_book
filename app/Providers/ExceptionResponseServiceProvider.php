@@ -24,19 +24,19 @@ class ExceptionResponseServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Response::macro('success', function ($message = "", $status = 200){
-            return response()->json([
+        Response::macro('success', function ($message = [], $status = 200){
+            return response()->Json([
                 'status' => 'success',
                 'message' => $message,
-                
+
             ], $status);
         });
 
         Response::macro('fail', function ($message = "", $status = 400){
-            return response()->json([
+            return response()->Json([
                 'status' => 'Failed',
                 'message' => $message,
-                
+
             ], $status);
         });
         // Response::macro('exceptionHandler', function ($exception){

@@ -8,7 +8,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RefreshRequest;
 use Illuminate\Validation\ValidationException;
-
+use Illuminate\Support\Facades\Response;
 class UserAuthentication
 {
     /**
@@ -29,10 +29,11 @@ class UserAuthentication
             }
             return $next($request);
         } catch (ValidationException $e) {
-            return response()->json([
-                'errors' => $e->errors(),
-                // 'message' => "error"
-            ], 401);
+            return Response::fail("Validation Error", 400);
+            // return response()->json([
+            //     'errors' => $e->errors(),
+            //     // 'message' => "error"
+            // ], 401);
         }
 
     }
