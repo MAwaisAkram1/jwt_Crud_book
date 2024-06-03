@@ -64,6 +64,8 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+     //creating static function for the userRegistration to create the user and store in database
+     // hash the password, token expiration
     public static function registerUser($data) {
         return self::create([
             'name' => $data['name'],
@@ -74,6 +76,8 @@ class User extends Authenticatable implements JWTSubject
         ]);
     }
 
+    // letting the user login to application by checking if th user exists in database and check the hash 
+    // password of the user to return the  user if the credentials are correct.
     public static function loginUser($data) {
         $user = self::where('email', $data['email'])->first();
         if (!$user || !Hash::check($data['password'], $user->password)){
@@ -83,10 +87,12 @@ class User extends Authenticatable implements JWTSubject
 
     }
 
+    // this function create a relation with UserToken Model to have multiple token for the same user
     public function tokens() {
         return $this->hasMany(UserToken::class);
     }
 
+    // this function create a relation with Book Model that say user can have many books
     public function books() {
         return $this->hasMany(Book::class);
     }

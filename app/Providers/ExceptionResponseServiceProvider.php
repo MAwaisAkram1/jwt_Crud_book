@@ -21,9 +21,12 @@ class ExceptionResponseServiceProvider extends ServiceProvider
      * Bootstrap services.
      *
      * @return void
+     * register services in the config directory inside app.php to be bootstrapped to be used throwOut
+     * the application.
      */
     public function boot()
     {
+        // create a custom response for the success case
         Response::macro('success', function ($message = [], $status = 200){
             return response()->Json([
                 'status' => 'success',
@@ -31,7 +34,7 @@ class ExceptionResponseServiceProvider extends ServiceProvider
 
             ], $status);
         });
-
+        // create a custom response for the fail case
         Response::macro('fail', function ($message = "", $status = 400){
             return response()->Json([
                 'status' => 'Failed',

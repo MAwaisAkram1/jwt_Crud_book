@@ -21,6 +21,7 @@ class BookController extends Controller
      */
     public function index()
     {
+        // get all Book collections from the database
         return new BookCollection(Book::all());
     }
 
@@ -42,6 +43,8 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
+        //create new book after validated the book validation process
+        //only authorize user can create new book
         $user = JWTAuth::parseToken()->authenticate();
         $bookData = $request->all();
         $bookData['user_id'] = $user->id;
@@ -57,6 +60,7 @@ class BookController extends Controller
      */
     public function show($id)
     {
+        // Get the Book record from the database by the ID
         return new BookResource(Book::findOrFail($id));
     }
 
@@ -80,6 +84,8 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request, $id)
     {
+        // Update the Book record from the database by the ID
+        // only the book owner is allowed to to update the Book record.
         $user = JWTAuth::parseToken()->authenticate();
         $book = Book::findOrFail($id);
         if ($book->user_id !== $user->id) {
@@ -100,6 +106,8 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
+        // Delete the Book record from the database by the ID
+        // only the book owner is allowed to delete the book record
         $user = JWTAuth::parseToken()->authenticate();
         $book = Book::findOrFail($id);
         if ($book->user_id !== $user->id) {

@@ -23,6 +23,7 @@ class LoginRequest extends FormRequest
      */
     public function rules()
     {
+        // return the validation rules for the request check it doesn't break the rules for login
         return [
             'email' =>'required|string|email|max:255',
             'password' => 'required|string',

@@ -31,7 +31,9 @@ class SendConfirmationEmail implements ShouldQueue
      * Execute the job.
      *
      * @return void
+     * this will handle the incoming request for the email sending to the user
      */
+
     public function handle()
     {
         Mail::to($this->user->email)->send(new UserConfirmationMail($this->user, $this->token));

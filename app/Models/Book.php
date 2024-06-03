@@ -23,6 +23,8 @@ class Book extends Model
         'user_id',
     ];
 
+    //this function create a relation of Book model to the user model that say many books can belong to
+    //single user.
     public function user() {
         return $this->belongsTo(User::class);
     }

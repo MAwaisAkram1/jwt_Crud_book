@@ -14,6 +14,7 @@ class BookCollection extends ResourceCollection
      */
     public function toArray($request)
     {
+        // BookCollection return the collection of books that are available
         return [
             'data' => $this->collection,
             'meta' => [

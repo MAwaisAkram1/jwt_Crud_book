@@ -25,7 +25,7 @@ class UserConfirmationMail extends Mailable
         $this->user = $user;
         $this->token = $token;
     }
-
+    // the build method is called to make a body content of the mail to send to the user.
     public function build() {
         return $this->view('emails.confirmation')->with([
             'user' => $this->user,

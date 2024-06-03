@@ -19,6 +19,8 @@ class UserToken extends Model
         'token'
     ];
 
+    //this function create a relation of UserToken model to the user model that say tis token belong to 
+    //the user specific user.
     public function user() {
         return $this->belongsTo(User::class);
     }

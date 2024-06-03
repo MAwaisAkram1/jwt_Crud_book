@@ -23,6 +23,8 @@ class UpdateBookRequest extends FormRequest
      */
     public function rules()
     {
+        // return the validation rules for the book requirement check it doesn't break the rules to 
+        // update the book
         return [
             'title' => 'required|max:255|',
             'author' => 'required|max:255',

@@ -23,6 +23,8 @@ class StoreBookRequest extends FormRequest
      */
     public function rules()
     {
+        // return the validation rules for the book requirement check it doesn't break the rules to store 
+        // the book requirement.
         return [
             'title' => 'required|max:255|',
             'author' => 'required|max:255',
