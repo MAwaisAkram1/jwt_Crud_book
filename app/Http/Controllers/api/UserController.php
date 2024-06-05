@@ -64,7 +64,7 @@ class UserController extends Controller
             // default duration of token expiration
             $defaultTTL = config('jwt.ttl');
             if ($remember_me) {
-                $extendTTL = 2;
+                $extendTTL = 60 * 24 * 7;
                 JWTAuth::factory()->setTTL($extendTTL);
             } else {
                 JWTAuth::factory()->setTTL($defaultTTL);

@@ -44,14 +44,20 @@ class Handler extends ExceptionHandler
         });
     }
 
-    // public function render($request , Throwable $e) {
-    //     if ($e instanceof NotFoundHttpException) {
-    //         Response::fail("Resource not Found", 404);
-    //     }
+    public function render($request , Throwable $e) {
+        if ($e instanceof NotFoundHttpException) {
+            return Response::fail("Resource not Found", 404);
+        }
 
-    //     if ($e instanceof ModelNotFoundException) {
-    //         Response::fail("Resource not Found", 404);
-    //     }
-    //     return parent::render($request, $exception);
-    // }
+        if ($e instanceof ModelNotFoundException) {
+            return Response::fail("Resource not Found", 404);
+        }
+        if ($e instanceof AuthenticationException) {
+            return Response::fail("Unauthenticated", 401);
+        }
+        if ($e instanceof ValidationException) {
+            return Response::fail($e->errors(), 422);
+        }
+        return Response::fail("An unexpected error occurred", 500);
+    }
 }
