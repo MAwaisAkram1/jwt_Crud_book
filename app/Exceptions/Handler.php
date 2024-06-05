@@ -2,10 +2,12 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
@@ -42,40 +44,14 @@ class Handler extends ExceptionHandler
         });
     }
 
-    
-    // public function render($request, Throwable $exception) {
-    //     if ($request instanceof ValidationException) {
-    //         return Response::fail();
+    // public function render($request , Throwable $e) {
+    //     if ($e instanceof NotFoundHttpException) {
+    //         Response::fail("Resource not Found", 404);
     //     }
+
+    //     if ($e instanceof ModelNotFoundException) {
+    //         Response::fail("Resource not Found", 404);
+    //     }
+    //     return parent::render($request, $exception);
     // }
-
-    // Response::macro('exceptionHandler', function ($exception){
-        //     if ($exception instanceof NotFoundHttpException){
-        //         return response()->json([
-        //             'error' => 'Resource not found',
-        //         ], 404);
-        //     }
-
-        //     if ($exception instanceof ForbiddenHttpException) {
-        //         return response()->json([
-        //             'error' => 'Forbidden',
-        //         ], 403);
-        //     }
-
-        //     if ($exception instanceof  AuthenticationException) {
-        //         return response()->json([
-        //             'error' => 'Unauthorized',
-        //         ], 401);
-        //     }
-
-        //     if ($exception instanceof ValidationException) {
-        //         return response()->json([
-        //             'errors' => 'Validation failed',
-        //         ], 422);
-        //     }
-
-        //     return response()->json([
-        //         'error' => 'An unexpected error occurred'
-        //     ], 500);
-        // });
 }

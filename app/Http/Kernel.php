@@ -43,6 +43,8 @@ class Kernel extends HttpKernel
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\LogBookOperations::class,
+
         ],
     ];
 
@@ -65,5 +67,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'UserAuth' => \App\Http\Middleware\UserAuthentication::class,
         'auth.jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+        'check.ip' => \App\Http\Middleware\CheckIp::class,
+        'book.throttle' => \App\Http\Middleware\BookThrottle::class,
     ];
 }

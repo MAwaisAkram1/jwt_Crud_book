@@ -32,7 +32,7 @@ class UserAuthentication
                 app(LoginRequest::class);
             }
             return $next($request);
-            
+
             // catch any exceptions that might have been thrown by the register and login methods
         } catch (ValidationException $e) {
             return Response::fail("Validation Error", 400);

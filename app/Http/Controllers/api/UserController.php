@@ -20,7 +20,7 @@ class UserController extends Controller
     |   generate random string for the url generation address to verify the user
     |   sendConfirmationEmail to send the mail to the user email address it will dipatch
     |   to the jobs to where it will then send the mail to to the user.
-    */ 
+    */
     public function register(Request $request) {
         $data = $request->all();
 
@@ -29,7 +29,7 @@ class UserController extends Controller
         $data['token_expiration'] =  now()->addMinutes(5);
         $user = User::registerUser($data);
 
-        SendConfirmationEmail::dispatch($user, $token);
+        SendConfirmationEmail::dispatch($user, $token)->onQueue('emails');
         return Response::success("User registration Pending. Please check your email to confirm your registration.", 200);
     }
 
@@ -88,7 +88,7 @@ class UserController extends Controller
             $response = [
                 'message' => 'User Logged In Successfully',
                 'token' => $token,
-                'expire_in' => $expire_in,
+                // 'expire_in' => $expire_in,
             ];
             return Response::success($response, 200);
             //exception handling in case of error
@@ -134,7 +134,7 @@ class UserController extends Controller
             JWTAuth::invalidate($token);
             UserToken::where('token', $token)->delete();
             return Response::success("Your logout Successfully", 200);
-            
+
         //exception handling in case of error
         } catch (JWTException $e) {
             return Response::fail("Failed to logout, plz tyr again", 401);

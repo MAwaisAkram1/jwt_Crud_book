@@ -21,6 +21,8 @@ class Book extends Model
         'genre',
         'price',
         'user_id',
+        'file_name',
+        'file_path',
     ];
 
     //this function create a relation of Book model to the user model that say many books can belong to

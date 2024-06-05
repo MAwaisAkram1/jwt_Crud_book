@@ -76,7 +76,7 @@ class User extends Authenticatable implements JWTSubject
         ]);
     }
 
-    // letting the user login to application by checking if th user exists in database and check the hash 
+    // letting the user login to application by checking if th user exists in database and check the hash
     // password of the user to return the  user if the credentials are correct.
     public static function loginUser($data) {
         $user = self::where('email', $data['email'])->first();

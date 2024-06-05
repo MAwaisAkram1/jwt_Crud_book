@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('published_date');
             $table->string('genre');
             $table->decimal('price', 8, 2);
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
 
 

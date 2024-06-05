@@ -5,10 +5,12 @@ namespace App\Http\Controllers\api;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BookResource;
 use App\Http\Resources\BookCollection;
 use App\Http\Requests\StoreBookRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateBookRequest;
 use Illuminate\Support\Facades\Response;
 
@@ -48,6 +50,14 @@ class BookController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
         $bookData = $request->all();
         $bookData['user_id'] = $user->id;
+
+        if($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filePath = $file->store('upload/books');
+            $fileName = $file->getClientOriginalName();
+            $bookData['file_name'] = $fileName;
+            $bookData['file_path'] = $filePath;
+        }
         $book = Book::create($bookData);
         return new BookResource($book);
     }
@@ -94,6 +104,17 @@ class BookController extends Controller
 
         $bookData = $request->all();
         $bookData['user_id'] = $user->id;
+
+        // if ($request->hasFile('file')){
+        //     if ($book->file_path) {
+        //         Storage::delete($book->file_path);
+        //     }
+        //     $file = $request->file('file');
+        //     $filePath = $file->store('upload/books');
+        //     $fileName = $file->getClientOriginalName();
+        //     $bookData['file_name'] = $fileName;
+        //     $bookData['file_path'] = $filePath;
+        // }
         $book->update($bookData);
         return new BookResource($book);
     }
@@ -112,6 +133,9 @@ class BookController extends Controller
         $book = Book::findOrFail($id);
         if ($book->user_id !== $user->id) {
             return Response::fail("Unauthorized", 403);
+        }
+        if ($book->file_path) {
+            Storage::delete($book->file_path);
         }
         $book->delete();
         return Response::success("Book Deleted Successfully", 200);
