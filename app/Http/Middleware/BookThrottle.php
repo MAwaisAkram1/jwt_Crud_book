@@ -16,7 +16,7 @@ class BookThrottle
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, $maxAttempts = 60, $decayMinutes = 1)
+    public function handle(Request $request, Closure $next, $maxAttempts = 15, $decayMinutes = 1)
     {
         $key = $this->resolveRequestSignature($request);
 

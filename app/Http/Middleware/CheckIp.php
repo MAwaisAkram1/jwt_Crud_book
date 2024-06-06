@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class CheckIp
 {
@@ -16,10 +17,10 @@ class CheckIp
      */
     public function handle(Request $request, Closure $next)
     {
-        $allowedIps = ['110.39.140.214'];
+        $allowedIps = ['127.0.0.1'];
 
         if (!in_array($request->ip(), $allowedIps)) {
-            return response()->json(['error' => 'Unauthorized IP'], 403);
+            return Response::fail('Unauthorized IP', 403);
         }
         return $next($request);
     }

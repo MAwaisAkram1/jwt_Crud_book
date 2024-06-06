@@ -46,7 +46,7 @@ Route::group(['middleware' => 'api'], function ($router) {
     Route::get('/books/{id}', [BookController::class, 'show']);
 
     // Protected routes accessible only to authenticated users
-    Route::middleware(['auth:api', 'book.throttle:10,1', LogBookOperations::class])->group(function () {
+    Route::middleware(['auth:api', 'book.throttle:10,1', 'check.ip', LogBookOperations::class])->group(function () {
         Route::post('/books/create', [BookController::class, 'store']); //store book route
         Route::put('/books/update/{id}', [BookController::class, 'update']); //update book route
         Route::delete('/books/delete/{id}', [BookController::class, 'destroy']); //delete book route

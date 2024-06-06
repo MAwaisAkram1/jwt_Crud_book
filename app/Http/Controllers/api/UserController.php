@@ -6,12 +6,14 @@ use App\Models\User;
 use App\Models\UserToken;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Mail\UserConfirmationMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Jobs\SendConfirmationEmail;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Jobs\SendConfirmationEmail;
 
 class UserController extends Controller
 {
@@ -27,9 +29,16 @@ class UserController extends Controller
         $token = Str::random(60);
         $data['confirmation_token'] = $token;
         $data['token_expiration'] =  now()->addMinutes(5);
+
+
+        $signedURL = URL::temporarySignedRoute(
+            'confirm',
+            $data['token_expiration'],
+            ['token' => $token]
+        );
         $user = User::registerUser($data);
 
-        SendConfirmationEmail::dispatch($user, $token)->onQueue('emails');
+        SendConfirmationEmail::dispatch($user, $signedURL);
         return Response::success("User registration Pending. Please check your email to confirm your registration.", 200);
     }
 
@@ -39,6 +48,10 @@ class UserController extends Controller
     */
 
     public function confirm($token) {
+        if (!$request->hasValidSignature()){
+            return Response::fail("Invalid or Expired Signature", 400);
+        }
+
         $user = User::where('confirmation_token', $token)->where('token_expiration', '>', now())->first();
         if (!$user) {
             return Response::fail("Invalid or Expired token", 400);

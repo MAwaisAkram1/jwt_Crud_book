@@ -13,24 +13,24 @@ class UserConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $token;
+    public $signedURL;
     public $user;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user, $token)
+    public function __construct($user, $signedURL)
     {
         $this->user = $user;
-        $this->token = $token;
+        $this->signedURL = $signedURL;
     }
     // the build method is called to make a body content of the mail to send to the user.
     public function build() {
         return $this->view('emails.confirmation')->with([
             'user' => $this->user,
-            'token' => $this->token,
-            'url' => route('confirm', ['token' => $this->token]),
+            'token' => $this->signedURL,
+            'url' => route('confirm', ['token' => $this->signedURL]),
         ]);
     }
 }
